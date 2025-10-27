@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Vacature Plugin
  * Description: A plugin to manage job applications 
- * Version: 1.2.0
+ * Version: 1.3.0
  * 
  * Author: Abderrahman bakkouy
  * Text domain: vacature-plugin
