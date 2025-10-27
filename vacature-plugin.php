@@ -1,3 +1,84 @@
+<?PHP
+
+
+// === Sollicitatie Entry (Frontend formulier) Custom Post Type ===
+function sollicitatie_entry_register_post_type() {
+    $labels = array(
+        'name'               => 'Sollicitaties',
+        'singular_name'      => 'Sollicitatie',
+        'menu_name'          => 'Sollicitaties',
+        'name_admin_bar'     => 'Sollicitatie',
+        'add_new'            => 'Nieuwe toevoegen',
+        'add_new_item'       => 'Nieuwe sollicitatie toevoegen',
+        'new_item'           => 'Nieuwe sollicitatie',
+        'edit_item'          => 'Sollicitatie bewerken',
+        'view_item'          => 'Sollicitatie bekijken',
+        'all_items'          => 'Alle sollicitaties',
+        'search_items'       => 'Sollicitaties zoeken',
+        'not_found'          => 'Geen sollicitaties gevonden',
+        'not_found_in_trash' => 'Geen sollicitaties in prullenbak gevonden',
+    );
+    $args = array(
+        'labels'             => $labels,
+        'public'             => false,
+        'publicly_queryable' => false,
+        'show_ui'            => true,
+        'show_in_menu'       => 'edit.php?post_type=vacature',
+        'menu_position'      => 30,
+        'supports'           => array('title', 'editor'),
+        'capability_type'    => 'post',
+        'has_archive'        => false,
+    );
+    register_post_type('sollicitatie_entry', $args);
+}
+add_action('init', 'sollicitatie_entry_register_post_type');
+
+// Voeg meta boxen toe voor sollicitatievelden
+function sollicitatie_entry_add_meta_boxes() {
+    add_meta_box(
+        'sollicitatie_entry_fields',
+        'Sollicitatiegegevens',
+        'sollicitatie_entry_render_meta_box',
+        'sollicitatie_entry',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'sollicitatie_entry_add_meta_boxes');
+
+function sollicitatie_entry_render_meta_box($post) {
+    $fields = array(
+        'voornaam_achternaam' => 'Naam',
+        'emailadres' => 'E-mailadres',
+        'telefoonnummer' => 'Telefoonnummer',
+        'woonplaats' => 'Woonplaats',
+        'vacature_functie' => 'Vacature functie',
+        'bericht' => 'Bericht',
+        'contactvoorkeur' => 'Contactvoorkeur',
+        'cv_document' => 'CV document',
+    );
+    echo '<table class="form-table">';
+    foreach ($fields as $key => $label) {
+        $value = get_post_meta($post->ID, $key, true);
+        echo '<tr>';
+        echo '<th><label>' . esc_html($label) . '</label></th>';
+        echo '<td>';
+        if ($key === 'cv_document' && $value) {
+            $url = wp_get_attachment_url($value);
+            if ($url) {
+                echo '<a href="' . esc_url($url) . '" target="_blank">Download CV</a>';
+            } else {
+                echo esc_html($value);
+            }
+        } else {
+            echo '<input type="text" readonly class="regular-text" value="' . esc_attr($value) . '" />';
+        }
+        echo '</td>';
+        echo '</tr>';
+    }
+    echo '</table>';
+}
+?>
 <?php
 
 /**
